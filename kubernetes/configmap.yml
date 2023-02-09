@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dkg-configmap
+data: 
+  SPRING_ZIPKIN_BASEURL: http://zipkin-service:9411/
+  SPRING_PROFILE_ACTIVE: dev
+  SPRING_CONFIG_IMPORT: configserver:http://configserver-service:8888/
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-service:8761/eureka/
