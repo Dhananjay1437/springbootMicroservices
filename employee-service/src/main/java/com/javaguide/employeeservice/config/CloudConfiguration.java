@@ -58,8 +58,7 @@ public class CloudConfiguration {
 	public CloudConfiguration(Environment env) {
 		this.env = env;
 	}
-
-	/**
+  /**
 	 * We run service in fargate so override default IP when in fargate profile
 	 * 
 	 * @param inetUtils
