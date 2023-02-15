@@ -1,0 +1,89 @@
+version: '3.7'
+
+services:
+  naming-server:
+    image: dkg1437/eureka-server:latest
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - uhr-network
+  config-server:
+    image: dkg1437/config-server:latest
+    mem_limit: 700m
+    ports:
+      - "8888:8888"
+    networks:
+      - uhr-network
+    depends_on:
+      - naming-server
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://naming-server:8761/eureka/      
+  employee:
+    image: dkg1437/employee-server:latest
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - uhr-network
+    depends_on:
+      - naming-server
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
+        window: 120s
+    environment: 
+      eureka.client.serviceUrl.defaultZone: http://naming-server:8761/eureka/
+      SPRING_CONFIG_IMPORT: http://config-server:8888/
+  department:
+    image: dkg1437/department-server:latest
+    mem_limit: 700m
+    ports:
+       - "8085:8085"
+    networks:
+      - uhr-network
+    depends_on:
+      - naming-server
+      - config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
+        window: 120s
+    environment: 
+      eureka.client.serviceUrl.defaultZone: http://naming-server:8761/eureka/
+      SPRING_CONFIG_IMPORT: http://config-server:8888/
+
+ 
+
+  api-gateway:
+    image: dkg1437/api-gateway:latest
+    mem_limit: 700m
+    ports:
+      - "9191:9191"
+    networks:
+      - uhr-network
+    depends_on:
+      - naming-server
+      #- config-server
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 120s
+        max_attempts: 3
+        window: 120s
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://naming-server:8761/eureka/
+
+
+
+
+
+networks:
+  uhr-network:
+
+
